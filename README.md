@@ -56,13 +56,30 @@ com.totvs.wedjat
 | `service` | Interfaces dos serviços de negócio |
 | `service.impl` | Implementações concretas dos serviços |
 
-## Como executar
+## Java (SDKMAN)
 
-Requisito: **Java 11+**
+O arquivo [`.sdkmanrc`](.sdkmanrc) fixa o JDK deste projeto. Com [SDKMAN](https://sdkman.io/) instalado, na raiz do repositório:
 
 ```bash
+sdk env
+java -version
+```
+
+Se essa distribuição ainda não estiver instalada:
+
+```bash
+sdk install java 21.0.2-open
+sdk env
+```
+
+Requisito: **Java 21.0.2-open**
+
+## Como executar
+
+```bash
+sdk env
 mkdir -p out
-find src -name "*.java" -print0 | xargs -0 javac -d out -encoding UTF-8
+find src -name "*.java" -print0 | xargs -0 javac --release 21 -d out -encoding UTF-8
 java -cp out com.totvs.wedjat.Main
 ```
 
