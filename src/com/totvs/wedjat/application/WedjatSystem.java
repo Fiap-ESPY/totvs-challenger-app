@@ -1,6 +1,5 @@
 package com.totvs.wedjat.application;
 
-import com.totvs.wedjat.domain.HandoffScore;
 import com.totvs.wedjat.domain.MeetingRecord;
 import com.totvs.wedjat.domain.Opportunity;
 import com.totvs.wedjat.domain.enums.BusinessUnit;
@@ -55,7 +54,7 @@ public class WedjatSystem {
             String criticalEvent,
             String decision) {
         Optional<Opportunity> opportunity = this.buscarOportunidade(opportunityId);
-        if (!opportunity.isPresent()) {
+        if (opportunity.isEmpty()) {
             throw new IllegalArgumentException("Oportunidade não encontrada.");
         }
         this.spicedService.atualizarSpiced(
@@ -77,9 +76,7 @@ public class WedjatSystem {
     public String calcularHandoffScore(long opportunityId) {
         Opportunity opportunity = this.buscarOportunidade(opportunityId)
                 .orElseThrow(() -> new IllegalArgumentException("Oportunidade não encontrada."));
-        HandoffScore handoffScore = this.handoffScoreService.gerarHandoffScore(opportunity);
-        opportunity.setHandoffScore(handoffScore);
-        return handoffScore.toString();
+        return this.handoffScoreService.gerarRelatorio(opportunity);
     }
 
     public String gerarDashboard() {

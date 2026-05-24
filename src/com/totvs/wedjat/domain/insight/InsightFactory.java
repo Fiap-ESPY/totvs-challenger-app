@@ -11,19 +11,13 @@ public final class InsightFactory {
         if (type == null) {
             throw new IllegalArgumentException("Tipo de insight obrigatório.");
         }
-        switch (type) {
-            case RISCO:
-                return new RiskInsight(description, evidence);
-            case OPORTUNIDADE:
-                return new OpportunityInsight(description, evidence);
-            case CHURN:
-                return new ChurnInsight(description, evidence);
-            case CONCORRENTE:
-                return new CompetitorInsight(description, evidence);
-            case CROSS_SELL:
-                return new CrossSellInsight(description, evidence);
-            default:
-                throw new IllegalArgumentException("Tipo de insight não suportado: " + type);
-        }
+
+        return switch (type) {
+            case RISCO -> new RiskInsight(description, evidence);
+            case OPORTUNIDADE -> new OpportunityInsight(description, evidence);
+            case CHURN -> new ChurnInsight(description, evidence);
+            case CONCORRENTE -> new CompetitorInsight(description, evidence);
+            case CROSS_SELL -> new CrossSellInsight(description, evidence);
+        };
     }
 }

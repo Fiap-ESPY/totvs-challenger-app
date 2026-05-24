@@ -20,15 +20,11 @@ public enum BusinessUnit {
             throw new IllegalArgumentException("BU obrigatória.");
         }
         String valor = input.trim().toUpperCase();
-        if ("1".equals(valor) || "TOTVS_GESTAO".equals(valor) || "GESTAO".equals(valor) || "TOTVS GESTAO".equals(valor)) {
-            return TOTVS_GESTAO;
-        }
-        if ("2".equals(valor) || "RD_STATION".equals(valor) || "RD".equals(valor) || "RD STATION".equals(valor)) {
-            return RD_STATION;
-        }
-        if ("3".equals(valor) || "TECHFIN".equals(valor) || "TOTVS TECHFIN".equals(valor)) {
-            return TECHFIN;
-        }
-        throw new IllegalArgumentException("BU inválida. Use: 1-TOTVS_GESTAO, 2-RD_STATION, 3-TECHFIN");
+        return switch (valor) {
+            case "1", "TOTVS_GESTAO", "GESTAO", "TOTVS GESTAO" -> TOTVS_GESTAO;
+            case "2", "RD_STATION", "RD", "RD STATION" -> RD_STATION;
+            case "3", "TECHFIN", "TOTVS TECHFIN" -> TECHFIN;
+            default -> throw new IllegalArgumentException("BU inválida. Use: 1-TOTVS_GESTAO, 2-RD_STATION, 3-TECHFIN");
+        };
     }
 }

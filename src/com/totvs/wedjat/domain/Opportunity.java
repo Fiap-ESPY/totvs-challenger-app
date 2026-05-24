@@ -105,7 +105,7 @@ public class Opportunity {
         if (spicedAssessment.hasImpactGap()) {
             return true;
         }
-        for (MeetingRecord meeting : meetings) {
+        for (MeetingRecord meeting : this.getMeetings()) {
             for (Insight insight : meeting.getInsights()) {
                 if (insight instanceof RiskInsight || insight instanceof ChurnInsight) {
                     return true;
@@ -118,8 +118,9 @@ public class Opportunity {
     @Override
     public String toString() {
         String riskLabel = this.hasRisk() ? "SIM" : "NAO";
-        String detalhesHandoff = this.handoffScore != null
-                ? this.handoffScore.toString()
+        HandoffScore handoffAtual = this.getHandoffScore();
+        String detalhesHandoff = handoffAtual != null
+                ? handoffAtual.toString()
                 : "sem handoff score calculado";
 
         String resumoFormatado =
@@ -146,7 +147,7 @@ public class Opportunity {
                 this.businessUnit.getDescricao(),
                 this.pipelineStage.getDescricao(),
                 this.spicedAssessment.countPreenchidos(),
-                this.meetings.size(),
+                this.getMeetings().size(),
                 riskLabel,
                 detalhesHandoff);
     }

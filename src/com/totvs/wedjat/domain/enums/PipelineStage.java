@@ -23,31 +23,17 @@ public enum PipelineStage {
         if (input == null || input.isBlank()) {
             throw new IllegalArgumentException("Etapa do pipeline obrigatória.");
         }
+
         String valor = input.trim().toUpperCase();
-        switch (valor) {
-            case "1":
-            case "GERACAO_DEMANDA":
-                return GERACAO_DEMANDA;
-            case "2":
-            case "QUALIFICACAO":
-                return QUALIFICACAO;
-            case "3":
-            case "PRE_VENDAS":
-                return PRE_VENDAS;
-            case "4":
-            case "REUNIAO_DIAGNOSTICA":
-                return REUNIAO_DIAGNOSTICA;
-            case "5":
-            case "PROPOSTA":
-                return PROPOSTA;
-            case "6":
-            case "NEGOCIACAO":
-                return NEGOCIACAO;
-            case "7":
-            case "FECHAMENTO":
-                return FECHAMENTO;
-            default:
-                throw new IllegalArgumentException("Etapa inválida. Use 1 a 7 conforme o menu.");
-        }
+        return switch (valor) {
+            case "1", "GERACAO_DEMANDA" -> GERACAO_DEMANDA;
+            case "2", "QUALIFICACAO" -> QUALIFICACAO;
+            case "3", "PRE_VENDAS" -> PRE_VENDAS;
+            case "4", "REUNIAO_DIAGNOSTICA" -> REUNIAO_DIAGNOSTICA;
+            case "5", "PROPOSTA" -> PROPOSTA;
+            case "6", "NEGOCIACAO" -> NEGOCIACAO;
+            case "7", "FECHAMENTO" -> FECHAMENTO;
+            default -> throw new IllegalArgumentException("Etapa inválida. Use 1 a 7 conforme o menu.");
+        };
     }
 }

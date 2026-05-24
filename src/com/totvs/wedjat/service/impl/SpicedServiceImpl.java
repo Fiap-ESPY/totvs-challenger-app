@@ -45,6 +45,7 @@ public class SpicedServiceImpl implements ISpicedService {
         briefing.append("================================\n");
         briefing.append("   BRIEFING SPICED\n");
         briefing.append("================================\n");
+        briefing.append("SPICED ID: ").append(spiced.getId()).append('\n');
         briefing.append("Cliente: ").append(opportunity.getClientName()).append('\n');
         briefing.append("Produto: ").append(opportunity.getProduct()).append('\n');
         briefing.append("BU: ").append(opportunity.getBusinessUnit().getDescricao()).append('\n');

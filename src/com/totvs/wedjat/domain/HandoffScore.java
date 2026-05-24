@@ -64,11 +64,11 @@ public class HandoffScore {
 
         return String.format(
                 resumoFormatado,
-                this.id,
-                this.opportunity.getId(),
-                this.opportunity.getClientName(),
-                this.score,
-                this.classificacao,
-                this.camposSpicedPreenchidos);
+                this.getId(),
+                this.getOpportunity().getId(),
+                this.getOpportunity().getClientName(),
+                this.getScore(),
+                this.getClassificacao(),
+                this.getCamposSpicedPreenchidos());
     }
 }

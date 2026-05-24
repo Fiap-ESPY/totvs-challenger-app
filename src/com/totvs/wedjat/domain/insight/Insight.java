@@ -52,10 +52,10 @@ public abstract class Insight {
 
         return String.format(
                 resumoFormatado,
-                this.id,
+                this.getId(),
                 this.getType().getDescricao(),
                 this.getPrioridade(),
-                this.description,
-                this.evidence == null || this.evidence.isBlank() ? "sem evidencia" : this.evidence);
+                this.getDescription(),
+                this.getEvidence() == null || this.getEvidence().isBlank() ? "sem evidencia" : this.getEvidence());
     }
 }

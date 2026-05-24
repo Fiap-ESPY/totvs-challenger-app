@@ -16,9 +16,6 @@ public class SpicedAssessment {
     private String criticalEvent;
     private String decision;
 
-    public SpicedAssessment() {
-    }
-
     public SpicedAssessment(
             String situation,
             String pain,

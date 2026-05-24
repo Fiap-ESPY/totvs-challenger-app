@@ -33,7 +33,7 @@ public class OpportunityServiceImpl implements IOpportunityService {
     @Override
     public Optional<Opportunity> buscarPorId(long id) {
         for (Opportunity o : this.opportunities) {
-            if (o.getId().longValue() == id) {
+            if (o.getId() == id) {
                 return Optional.of(o);
             }
         }
@@ -43,7 +43,7 @@ public class OpportunityServiceImpl implements IOpportunityService {
     @Override
     public boolean atualizarEtapa(long id, PipelineStage novaEtapa) {
         Optional<Opportunity> encontrada = this.buscarPorId(id);
-        if (!encontrada.isPresent()) {
+        if (encontrada.isEmpty()) {
             return false;
         }
         encontrada.get().setPipelineStage(novaEtapa);

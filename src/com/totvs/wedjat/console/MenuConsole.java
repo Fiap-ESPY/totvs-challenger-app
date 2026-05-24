@@ -40,40 +40,51 @@ public final class MenuConsole {
     }
 
     private boolean processar(String opcao) {
-        switch (opcao) {
-            case "1":
+        return switch (opcao) {
+            case "1" -> {
                 handler.cadastrarOportunidade();
-                return true;
-            case "2":
+                yield true;
+            }
+            case "2" -> {
                 handler.listarOportunidades();
-                return true;
-            case "3":
+                yield true;
+            }
+            case "3" -> {
                 handler.registrarReuniao();
-                return true;
-            case "4":
+                yield true;
+            }
+            case "4" -> {
                 handler.atualizarSpiced();
-                return true;
-            case "5":
+                yield true;
+            }
+            case "5" -> {
                 handler.gerarBriefing();
-                return true;
-            case "6":
+                yield true;
+            }
+            case "6" -> {
                 handler.calcularHandoff();
-                return true;
-            case "7":
+                yield true;
+            }
+            case "7" -> {
                 handler.exibirDashboardGeral();
-                return true;
-            case "8":
+                yield true;
+            }
+            case "8" -> {
                 handler.dashboardPorBu();
-                return true;
-            case "9":
+                yield true;
+            }
+            case "9" -> {
                 handler.atualizarEtapa();
-                return true;
-            case "0":
+                yield true;
+            }
+            case "0" -> {
                 System.out.println("Encerrando Wedjat.");
-                return false;
-            default:
+                yield false;
+            }
+            default -> {
                 System.out.println("Opcao invalida.");
-                return true;
-        }
+                yield true;
+            }
+        };
     }
 }

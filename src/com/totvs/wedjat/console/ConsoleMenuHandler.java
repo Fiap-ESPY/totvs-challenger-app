@@ -52,7 +52,7 @@ public final class ConsoleMenuHandler {
         String transcription = input.readRequiredLine("Cole a transcrição da reunião: ");
         try {
             MeetingRecord meeting = sistema.registrarReuniao(id, transcription);
-            System.out.println("Reunião #" + meeting.getId() + " registrada em " + meeting.getDate() + ".");
+            System.out.println(meeting);
             System.out.println("Insights identificados:");
             if (meeting.getInsights().isEmpty()) {
                 System.out.println("  Nenhum insight automático detectado.");

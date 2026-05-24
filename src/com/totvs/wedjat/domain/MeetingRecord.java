@@ -54,13 +54,15 @@ public class MeetingRecord {
 
     public void addInsights(List<Insight> novosInsights) {
         if (novosInsights != null) {
-            this.insights.addAll(novosInsights);
+            for (Insight insight : novosInsights) {
+                this.addInsight(insight);
+            }
         }
     }
 
     @Override
     public String toString() {
-        String resumoTranscricao = this.resumirTranscricao(this.transcription);
+        String resumoTranscricao = this.resumirTranscricao(this.getTranscription());
         String resumoFormatado =
                 "================================%n"
                         + "   REUNIAO%n"
