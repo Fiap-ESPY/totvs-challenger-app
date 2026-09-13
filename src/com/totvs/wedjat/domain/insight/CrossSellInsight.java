@@ -8,6 +8,10 @@ public class CrossSellInsight extends Insight {
         super(description, evidence);
     }
 
+    public CrossSellInsight(Long id, String description, String evidence) {
+        super(id, description, evidence);
+    }
+
     @Override
     public InsightType getType() {
         return InsightType.CROSS_SELL;

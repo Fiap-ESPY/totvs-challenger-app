@@ -8,6 +8,10 @@ public class CompetitorInsight extends Insight {
         super(description, evidence);
     }
 
+    public CompetitorInsight(Long id, String description, String evidence) {
+        super(id, description, evidence);
+    }
+
     @Override
     public InsightType getType() {
         return InsightType.CONCORRENTE;
