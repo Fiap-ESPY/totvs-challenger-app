@@ -5,6 +5,8 @@ import com.totvs.wedjat.domain.Opportunity;
 import com.totvs.wedjat.domain.enums.BusinessUnit;
 import com.totvs.wedjat.domain.enums.PipelineStage;
 import com.totvs.wedjat.infrastructure.db.ConnectionFactory;
+import com.totvs.wedjat.infrastructure.db.SchemaValidator;
+import com.totvs.wedjat.infrastructure.db.dao.OpportunityDAO;
 import com.totvs.wedjat.service.impl.HandoffScoreServiceImpl;
 import com.totvs.wedjat.service.impl.OpportunityServiceImpl;
 import com.totvs.wedjat.service.impl.SpicedServiceImpl;
@@ -14,152 +16,160 @@ import java.sql.Connection;
 import java.util.List;
 
 /**
- * Classe de teste para validar o CRUD completo via camada DAO.
- * Execute com: java -cp "out:lib/ojdbc11.jar" com.totvs.wedjat.TesteDao
+ * Bateria de testes de integração (conexão, schema e CRUD).
+ *
+ * <p>Maven: {@code mvn -Ptest-dao exec:java}
  */
-public class TesteDao {
+public final class TesteDao {
 
-    private static final OpportunityServiceImpl  opportunityService  = new OpportunityServiceImpl();
-    private static final SpicedServiceImpl       spicedService       = new SpicedServiceImpl();
+    private static int passed;
+    private static int failed;
+
+    private static final OpportunityServiceImpl opportunityService = new OpportunityServiceImpl();
+    private static final SpicedServiceImpl spicedService = new SpicedServiceImpl();
     private static final TranscriptionServiceImpl transcriptionService = new TranscriptionServiceImpl();
-    private static final HandoffScoreServiceImpl handoffService      = new HandoffScoreServiceImpl();
+    private static final HandoffScoreServiceImpl handoffService = new HandoffScoreServiceImpl();
 
     public static void main(String[] args) {
-        titulo("WEDJAT — TESTE DAO");
+        titulo("WEDJAT — BATERIA DE TESTES");
 
-        testarConexao();
-        Opportunity opp  = testarInsert();
-        testarFindAll();
-        testarFindById(opp.getId());
-        testarUpdateStage(opp.getId());
-        testarSpiced(opp);
-        testarReuniao(opp);
-        testarHandoff(opp);
-        testarDelete(opp.getId());
-        testarFindAll(); // confirma remoção
+        run("Conexão JDBC", TesteDao::testarConexao);
+        if (!run("Schema Oracle (sequences + tabelas)", TesteDao::testarSchema)) {
+            resumo();
+            System.exit(1);
+        }
 
-        titulo("TESTE CONCLUÍDO");
+        Opportunity[] inserted = new Opportunity[1];
+        if (run("INSERT oportunidade + SPICED", () -> inserted[0] = testarInsert())) {
+            final Opportunity ref = inserted[0];
+            run("SELECT listar oportunidades", TesteDao::testarFindAll);
+            run("SELECT por ID", () -> testarFindById(ref.getId()));
+            run("UPDATE etapa pipeline", () -> testarUpdateStage(ref.getId()));
+            run("UPDATE SPICED", () -> testarSpiced(ref));
+            run("INSERT reunião + insights", () -> testarReuniao(ref));
+            run("INSERT/UPDATE handoff score", () -> testarHandoff(ref));
+            run("DELETE oportunidade (cascade)", () -> testarDelete(ref.getId()));
+            run("SELECT pós-delete", TesteDao::testarFindAll);
+        }
+
+        titulo("FIM DA BATERIA");
+        resumo();
+        System.exit(failed > 0 ? 1 : 0);
     }
 
-    // -------------------------------------------------------------------------
-    // 1. Conexão
-    // -------------------------------------------------------------------------
-    private static void testarConexao() {
-        secao("1. Conexão com o banco");
-        try (Connection conn = ConnectionFactory.getConnection()) {
-            System.out.println("✅ Conectado: " + conn.getMetaData().getDatabaseProductName()
-                    + " " + conn.getMetaData().getDatabaseProductVersion());
+    private static boolean run(String nome, ThrowingRunnable test) {
+        secao(nome);
+        try {
+            test.run();
+            passed++;
+            return true;
         } catch (Exception e) {
-            falha("Erro de conexão", e);
+            failed++;
+            System.out.println("❌ FALHOU: " + rootMessage(e));
+            if (e.getCause() != null && e.getCause() != e) {
+                System.out.println("   Causa: " + e.getCause().getMessage());
+            }
+            return false;
         }
     }
 
-    // -------------------------------------------------------------------------
-    // 2. INSERT — cadastrar oportunidade
-    // -------------------------------------------------------------------------
+    private static void testarConexao() throws Exception {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            System.out.println("✅ Conectado: " + conn.getMetaData().getDatabaseProductName()
+                    + " | usuário: " + conn.getMetaData().getUserName());
+        }
+    }
+
+    private static void testarSchema() throws Exception {
+        List<String> missing = SchemaValidator.findMissingObjects();
+        if (!missing.isEmpty()) {
+            System.out.println("❌ Objetos ausentes no schema:");
+            missing.forEach(m -> System.out.println("   - " + m));
+            System.out.println();
+            System.out.println("Correção: conecte no Oracle (SQL Developer / SQL*Plus) com o mesmo");
+            System.out.println("usuário do .env e execute o arquivo sql/ddl.sql deste projeto.");
+            throw new IllegalStateException("Schema incompleto — " + missing.size() + " objeto(s) faltando");
+        }
+        System.out.println("✅ Sequences e tabelas OK (5 + 5)");
+    }
+
     private static Opportunity testarInsert() {
-        secao("2. INSERT — cadastrar oportunidade");
         Opportunity opp = opportunityService.cadastrar(
                 "Empresa Teste LTDA",
                 "Protheus",
                 BusinessUnit.TOTVS_GESTAO,
                 PipelineStage.QUALIFICACAO);
-
-        System.out.println("✅ Oportunidade inserida com ID: " + opp.getId());
-        System.out.println("   SPICED ID: " + opp.getSpicedAssessment().getId());
+        System.out.println("✅ ID oportunidade: " + opp.getId()
+                + " | SPICED id: " + opp.getSpicedAssessment().getId());
         return opp;
     }
 
-    // -------------------------------------------------------------------------
-    // 3. SELECT — listar todas
-    // -------------------------------------------------------------------------
     private static void testarFindAll() {
-        secao("3. SELECT — listar oportunidades");
         List<Opportunity> lista = opportunityService.listar();
-        System.out.println("✅ Total encontrado: " + lista.size());
-        lista.forEach(o -> System.out.println("   #" + o.getId() + " — " + o.getClientName()
-                + " [" + o.getPipelineStage().getDescricao() + "]"));
+        System.out.println("✅ Registros listados: " + lista.size());
     }
 
-    // -------------------------------------------------------------------------
-    // 4. SELECT por PK
-    // -------------------------------------------------------------------------
     private static void testarFindById(long id) {
-        secao("4. SELECT por PK — buscar id=" + id);
-        opportunityService.buscarPorId(id).ifPresentOrElse(
-                o -> System.out.println("✅ Encontrado: " + o.getClientName()
-                        + " | SPICED campos: " + o.getSpicedAssessment().countPreenchidos()),
-                () -> System.out.println("❌ Oportunidade não encontrada"));
+        Opportunity o = opportunityService.buscarPorId(id)
+                .orElseThrow(() -> new IllegalStateException("Oportunidade id=" + id + " não encontrada"));
+        System.out.println("✅ Cliente: " + o.getClientName()
+                + " | SPICED: " + o.getSpicedAssessment().countPreenchidos() + "/5");
     }
 
-    // -------------------------------------------------------------------------
-    // 5. UPDATE — atualizar etapa
-    // -------------------------------------------------------------------------
     private static void testarUpdateStage(long id) {
-        secao("5. UPDATE — atualizar etapa para PRE_VENDAS");
-        boolean ok = opportunityService.atualizarEtapa(id, PipelineStage.PRE_VENDAS);
-        System.out.println(ok ? "✅ Etapa atualizada" : "❌ Oportunidade não encontrada");
-
-        opportunityService.buscarPorId(id).ifPresent(
-                o -> System.out.println("   Nova etapa confirmada: " + o.getPipelineStage().getDescricao()));
+        if (!opportunityService.atualizarEtapa(id, PipelineStage.PRE_VENDAS)) {
+            throw new IllegalStateException("UPDATE etapa não afetou linhas");
+        }
+        System.out.println("✅ Etapa atualizada para Pré-vendas");
     }
 
-    // -------------------------------------------------------------------------
-    // 6. UPDATE — atualizar SPICED manualmente
-    // -------------------------------------------------------------------------
     private static void testarSpiced(Opportunity opp) {
-        secao("6. UPDATE — preencher campos SPICED");
         spicedService.atualizarSpiced(opp,
-                "Cliente usa ERP legado com processos manuais",
-                "Retrabalho elevado no fechamento contábil",
-                "Perda de 40h/mês de produtividade",
-                "Auditoria fiscal em dezembro",
-                "CFO e Diretora de TI");
-
-        System.out.println("✅ SPICED atualizado. Campos preenchidos: "
-                + opp.getSpicedAssessment().countPreenchidos() + "/5");
+                "Cliente usa ERP legado",
+                "Retrabalho no fechamento",
+                "Perda de produtividade",
+                "Auditoria em dezembro",
+                "CFO e TI");
+        if (opp.getSpicedAssessment().countPreenchidos() < 5) {
+            throw new IllegalStateException("SPICED deveria ter 5 campos preenchidos");
+        }
+        System.out.println("✅ SPICED 5/5 persistido");
     }
 
-    // -------------------------------------------------------------------------
-    // 7. INSERT — registrar reunião + insights
-    // -------------------------------------------------------------------------
     private static void testarReuniao(Opportunity opp) {
-        secao("7. INSERT — registrar reunião com transcrição");
-        String transcricao =
-                "Cliente usa Protheus há 5 anos, tem dor em integração fiscal. " +
-                "CFO bloqueou orçamento, comparou com SAP. Deadline em dezembro.";
-
-        MeetingRecord meeting = transcriptionService.registrarReuniao(opp, transcricao);
-
-        System.out.println("✅ Reunião inserida com ID: " + meeting.getId());
-        System.out.println("   Insights gerados: " + meeting.getInsights().size());
-        meeting.getInsights().forEach(
-                i -> System.out.println("   → [" + i.getType().getDescricao() + "] " + i.getDescription()));
+        String texto = "Cliente usa Protheus, dor em RH, comparou com Senior, CFO bloqueou orçamento";
+        MeetingRecord meeting = transcriptionService.registrarReuniao(opp, texto);
+        if (meeting.getId() == null) {
+            throw new IllegalStateException("Reunião sem ID após insert");
+        }
+        System.out.println("✅ Reunião id=" + meeting.getId()
+                + " | insights=" + meeting.getInsights().size());
     }
 
-    // -------------------------------------------------------------------------
-    // 8. INSERT/UPDATE — calcular handoff score
-    // -------------------------------------------------------------------------
     private static void testarHandoff(Opportunity opp) {
-        secao("8. INSERT — calcular e persistir handoff score");
         String relatorio = handoffService.gerarRelatorio(opp);
-        System.out.println("✅ Handoff calculado e persistido:");
-        System.out.println(relatorio);
+        if (relatorio == null || !relatorio.contains("HANDOFF SCORE")) {
+            throw new IllegalStateException("Relatório de handoff inválido");
+        }
+        System.out.println("✅ Handoff persistido (trecho): "
+                + relatorio.lines().filter(l -> l.contains("Score:")).findFirst().orElse("ok"));
     }
 
-    // -------------------------------------------------------------------------
-    // 9. DELETE — remover oportunidade (cascade: SPICED, meetings, insights, handoff)
-    // -------------------------------------------------------------------------
     private static void testarDelete(long id) {
-        secao("9. DELETE — remover oportunidade id=" + id);
-        boolean ok = new com.totvs.wedjat.infrastructure.db.dao.OpportunityDAO().delete(id);
-        System.out.println(ok ? "✅ Oportunidade e registros filhos removidos (cascade)"
-                : "❌ Oportunidade não encontrada");
+        if (!new OpportunityDAO().delete(id)) {
+            throw new IllegalStateException("DELETE não removeu oportunidade id=" + id);
+        }
+        System.out.println("✅ DELETE id=" + id + " (cascade em filhos)");
     }
 
-    // -------------------------------------------------------------------------
-    // Formatação
-    // -------------------------------------------------------------------------
+    private static String rootMessage(Throwable e) {
+        Throwable t = e;
+        while (t.getCause() != null) {
+            t = t.getCause();
+        }
+        return t.getMessage();
+    }
+
     private static void titulo(String texto) {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("  " + texto);
@@ -170,8 +180,12 @@ public class TesteDao {
         System.out.println("\n--- " + texto + " ---");
     }
 
-    private static void falha(String msg, Exception e) {
-        System.out.println("❌ " + msg + ": " + e.getMessage());
-        System.exit(1);
+    private static void resumo() {
+        System.out.println("\nResumo: " + passed + " OK | " + failed + " FALHA(S)");
+    }
+
+    @FunctionalInterface
+    private interface ThrowingRunnable {
+        void run() throws Exception;
     }
 }

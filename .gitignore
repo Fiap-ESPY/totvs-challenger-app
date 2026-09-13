@@ -29,6 +29,9 @@ replay_pid*
 # Pasta de saída de compilação
 out/
 
+# Maven
+target/
+
 # Driver JDBC (não versionar binários)
 lib/
 

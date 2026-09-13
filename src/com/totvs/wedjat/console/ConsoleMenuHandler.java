@@ -5,6 +5,7 @@ import com.totvs.wedjat.domain.MeetingRecord;
 import com.totvs.wedjat.domain.Opportunity;
 import com.totvs.wedjat.domain.enums.BusinessUnit;
 import com.totvs.wedjat.domain.enums.PipelineStage;
+import com.totvs.wedjat.infrastructure.db.DbExceptionMessages;
 
 import java.util.List;
 
@@ -32,10 +33,20 @@ public final class ConsoleMenuHandler {
             System.out.println(opportunity);
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
     public void listarOportunidades() {
+        try {
+            listarOportunidadesInterno();
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
+        }
+    }
+
+    private void listarOportunidadesInterno() {
         List<Opportunity> oportunidades = sistema.listarOportunidades();
         if (oportunidades.isEmpty()) {
             System.out.println("Nenhuma oportunidade cadastrada.");
@@ -61,6 +72,8 @@ public final class ConsoleMenuHandler {
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
@@ -77,6 +90,8 @@ public final class ConsoleMenuHandler {
             System.out.println("SPICED atualizado com sucesso.");
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
@@ -86,6 +101,8 @@ public final class ConsoleMenuHandler {
             System.out.println(sistema.gerarBriefing(id));
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
@@ -95,11 +112,17 @@ public final class ConsoleMenuHandler {
             System.out.println(sistema.calcularHandoffScore(id));
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
     public void exibirDashboardGeral() {
-        System.out.println(sistema.gerarDashboard());
+        try {
+            System.out.println(sistema.gerarDashboard());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
+        }
     }
 
     public void dashboardPorBu() {
@@ -109,6 +132,8 @@ public final class ConsoleMenuHandler {
             System.out.println(sistema.gerarDashboardPorBu(bu));
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
@@ -124,6 +149,8 @@ public final class ConsoleMenuHandler {
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(DbExceptionMessages.format(e));
         }
     }
 
