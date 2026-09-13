@@ -22,3 +22,15 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Variáveis de ambiente e credenciais (nunca versionar)
+.env
+
+# Pasta de saída de compilação
+out/
+
+# Driver JDBC (não versionar binários)
+lib/
+
+# Planos e anotações locais
+PLANO_SPRINT3.md

@@ -9,7 +9,6 @@ import com.totvs.wedjat.domain.insight.RiskInsight;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Representa uma oportunidade comercial monitorada pelo Wedjat.
@@ -18,7 +17,7 @@ import java.util.Random;
  */
 public class Opportunity {
 
-    private final Long id = Math.abs(new Random().nextLong());
+    private Long id;
     private final String clientName;
     private final String product;
     private final BusinessUnit businessUnit;
@@ -27,7 +26,23 @@ public class Opportunity {
     private final List<MeetingRecord> meetings = new ArrayList<>();
     private HandoffScore handoffScore;
 
+    /**
+     * Construtor para criação de nova oportunidade.
+     * O ID é nulo até que o DAO obtenha o valor da SEQUENCE do Oracle.
+     */
     public Opportunity(
+            String clientName,
+            String product,
+            BusinessUnit businessUnit,
+            PipelineStage pipelineStage) {
+        this(null, clientName, product, businessUnit, pipelineStage);
+    }
+
+    /**
+     * Construtor completo — usado pelo DAO ao carregar registros do banco.
+     */
+    public Opportunity(
+            Long id,
             String clientName,
             String product,
             BusinessUnit businessUnit,
@@ -45,6 +60,7 @@ public class Opportunity {
             throw new IllegalArgumentException("Etapa do pipeline obrigatória.");
         }
 
+        this.id = id;
         this.clientName = clientName.trim();
         this.product = product.trim();
         this.businessUnit = businessUnit;
@@ -55,6 +71,7 @@ public class Opportunity {
     public Long getId() {
         return this.id;
     }
+
 
     public String getClientName() {
         return clientName;

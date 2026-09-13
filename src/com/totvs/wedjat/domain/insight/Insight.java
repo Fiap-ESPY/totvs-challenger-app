@@ -2,22 +2,27 @@ package com.totvs.wedjat.domain.insight;
 
 import com.totvs.wedjat.domain.enums.InsightType;
 
-import java.util.Random;
-
 /**
  * Classe abstrata que representa um achado da análise conversacional de uma reunião comercial.
  * Subclasses especializam o tipo de insight e a prioridade comercial associada.
  */
 public abstract class Insight {
 
-    private final Long id = Math.abs(new Random().nextLong());
+    private Long id;
     private final String description;
     private final String evidence;
 
+    /** Construtor para novo insight (ID atribuído pelo DAO via SEQUENCE). */
     protected Insight(String description, String evidence) {
+        this(null, description, evidence);
+    }
+
+    /** Construtor completo — usado pelo DAO ao carregar registros do banco. */
+    protected Insight(Long id, String description, String evidence) {
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("Descrição do insight obrigatória.");
         }
+        this.id = id;
         this.description = description.trim();
         this.evidence = evidence == null || evidence.isBlank() ? "transcrição" : evidence.trim();
     }
@@ -25,6 +30,7 @@ public abstract class Insight {
     public Long getId() {
         return this.id;
     }
+
 
     public String getDescription() {
         return this.description;
