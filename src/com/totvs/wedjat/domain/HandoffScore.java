@@ -1,20 +1,24 @@
 package com.totvs.wedjat.domain;
 
-import java.util.Random;
-
 /**
  * Representa o score de qualidade do handoff comercial (pré-vendas para vendas).
  * Consolida pontuação, classificação e vínculo com a oportunidade avaliada.
  */
 public class HandoffScore {
 
-    private final Long id = Math.abs(new Random().nextLong());
+    private Long id;
     private final int score;
     private final String classificacao;
     private final int camposSpicedPreenchidos;
     private final Opportunity opportunity;
 
+    /** Construtor para novo handoff score (ID atribuído pelo DAO via SEQUENCE). */
     public HandoffScore(Opportunity opportunity, int score, String classificacao, int camposSpicedPreenchidos) {
+        this(null, opportunity, score, classificacao, camposSpicedPreenchidos);
+    }
+
+    /** Construtor completo — usado pelo DAO ao carregar registros do banco. */
+    public HandoffScore(Long id, Opportunity opportunity, int score, String classificacao, int camposSpicedPreenchidos) {
         if (opportunity == null) {
             throw new IllegalArgumentException("Oportunidade obrigatória para o handoff score.");
         }
@@ -24,6 +28,7 @@ public class HandoffScore {
         if (classificacao == null || classificacao.isBlank()) {
             throw new IllegalArgumentException("Classificação obrigatória.");
         }
+        this.id = id;
         this.opportunity = opportunity;
         this.score = score;
         this.classificacao = classificacao.trim();
@@ -33,6 +38,7 @@ public class HandoffScore {
     public Long getId() {
         return this.id;
     }
+
 
     public int getScore() {
         return this.score;

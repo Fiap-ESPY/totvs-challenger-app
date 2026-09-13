@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Representa o registro de uma reunião comercial vinculada a uma oportunidade.
@@ -14,18 +13,25 @@ import java.util.Random;
  */
 public class MeetingRecord {
 
-    private final Long id = Math.abs(new Random().nextLong());
+    private Long id;
     private final LocalDate date;
     private final String transcription;
     private final List<Insight> insights = new ArrayList<>();
 
+    /** Construtor para nova reunião (ID atribuído pelo DAO via SEQUENCE). */
     public MeetingRecord(LocalDate date, String transcription) {
+        this(null, date, transcription);
+    }
+
+    /** Construtor completo — usado pelo DAO ao carregar registros do banco. */
+    public MeetingRecord(Long id, LocalDate date, String transcription) {
         if (date == null) {
             throw new IllegalArgumentException("Data da reunião obrigatória.");
         }
         if (transcription == null || transcription.isBlank()) {
             throw new IllegalArgumentException("Transcrição obrigatória.");
         }
+        this.id = id;
         this.date = date;
         this.transcription = transcription.trim();
     }
@@ -33,6 +39,7 @@ public class MeetingRecord {
     public Long getId() {
         return this.id;
     }
+
 
     public LocalDate getDate() {
         return this.date;

@@ -1,7 +1,5 @@
 package com.totvs.wedjat.domain;
 
-import java.util.Random;
-
 /**
  * Representa a estrutura SPICED de uma oportunidade comercial
  * (Situation, Pain, Impact, Critical Event, Decision).
@@ -9,19 +7,37 @@ import java.util.Random;
  */
 public class SpicedAssessment {
 
-    private final Long id = Math.abs(new Random().nextLong());
+    private Long id;
     private String situation;
     private String pain;
     private String impact;
     private String criticalEvent;
     private String decision;
 
+    /** Construtor para nova avaliação SPICED (ID atribuído pelo DAO via SEQUENCE). */
+    public SpicedAssessment() {
+        this(null, null, null, null, null, null);
+    }
+
+    /** Construtor para nova avaliação com campos pré-preenchidos. */
     public SpicedAssessment(
             String situation,
             String pain,
             String impact,
             String criticalEvent,
             String decision) {
+        this(null, situation, pain, impact, criticalEvent, decision);
+    }
+
+    /** Construtor completo — usado pelo DAO ao carregar registros do banco. */
+    public SpicedAssessment(
+            Long id,
+            String situation,
+            String pain,
+            String impact,
+            String criticalEvent,
+            String decision) {
+        this.id = id;
         this.situation = normalize(situation);
         this.pain = normalize(pain);
         this.impact = normalize(impact);
@@ -36,6 +52,7 @@ public class SpicedAssessment {
     public Long getId() {
         return this.id;
     }
+
 
     public String getSituation() {
         return this.situation;
