@@ -8,6 +8,10 @@ public class ChurnInsight extends Insight {
         super(description, evidence);
     }
 
+    public ChurnInsight(Long id, String description, String evidence) {
+        super(id, description, evidence);
+    }
+
     @Override
     public InsightType getType() {
         return InsightType.CHURN;

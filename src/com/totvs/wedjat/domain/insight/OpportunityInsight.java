@@ -8,6 +8,10 @@ public class OpportunityInsight extends Insight {
         super(description, evidence);
     }
 
+    public OpportunityInsight(Long id, String description, String evidence) {
+        super(id, description, evidence);
+    }
+
     @Override
     public InsightType getType() {
         return InsightType.OPORTUNIDADE;
