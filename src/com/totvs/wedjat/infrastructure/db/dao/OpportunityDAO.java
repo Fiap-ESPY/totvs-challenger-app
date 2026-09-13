@@ -53,7 +53,7 @@ public class OpportunityDAO {
                     opportunity.getPipelineStage());
 
             SpicedAssessment savedSpiced = spicedDAO.insert(opportunity.getSpicedAssessment(), id);
-            copySpiced(savedSpiced, saved.getSpicedAssessment());
+            saved.setSpicedAssessment(savedSpiced);
 
             return saved;
 
@@ -161,7 +161,7 @@ public class OpportunityDAO {
 
         Opportunity opp = new Opportunity(id, clientName, product, bu, stage);
 
-        spicedDAO.findByOpportunityId(id).ifPresent(spiced -> copySpiced(spiced, opp.getSpicedAssessment()));
+        spicedDAO.findByOpportunityId(id).ifPresent(opp::setSpicedAssessment);
 
         List<MeetingRecord> meetings = meetingDAO.findByOpportunityId(id);
         for (MeetingRecord m : meetings) {
@@ -171,11 +171,4 @@ public class OpportunityDAO {
         return opp;
     }
 
-    private void copySpiced(SpicedAssessment source, SpicedAssessment target) {
-        target.setSituation(source.getSituation());
-        target.setPain(source.getPain());
-        target.setImpact(source.getImpact());
-        target.setCriticalEvent(source.getCriticalEvent());
-        target.setDecision(source.getDecision());
-    }
 }

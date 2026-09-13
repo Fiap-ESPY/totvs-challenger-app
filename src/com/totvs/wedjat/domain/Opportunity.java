@@ -22,7 +22,7 @@ public class Opportunity {
     private final String product;
     private final BusinessUnit businessUnit;
     private PipelineStage pipelineStage;
-    private final SpicedAssessment spicedAssessment;
+    private SpicedAssessment spicedAssessment;
     private final List<MeetingRecord> meetings = new ArrayList<>();
     private HandoffScore handoffScore;
 
@@ -98,6 +98,17 @@ public class Opportunity {
 
     public SpicedAssessment getSpicedAssessment() {
         return spicedAssessment;
+    }
+
+    /**
+     * Substitui o SpicedAssessment pelo objeto carregado do banco (que possui id persistido).
+     * Uso exclusivo do DAO — não chamar em fluxos de negócio.
+     */
+    public void setSpicedAssessment(SpicedAssessment spicedAssessment) {
+        if (spicedAssessment == null) {
+            throw new IllegalArgumentException("SpicedAssessment não pode ser nulo.");
+        }
+        this.spicedAssessment = spicedAssessment;
     }
 
     public List<MeetingRecord> getMeetings() {
