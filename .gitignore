@@ -37,3 +37,12 @@ lib/
 
 # Planos e anotações locais
 PLANO_SPRINT3.md
+
+# Entrega Sprint 3 (PDF/HTML locais — não versionar)
+wedjat-sprint3.html
+wedjat-sprint3.pdf
+*.pdf
+
+# macOS / Python local
+.DS_Store
+.venv/

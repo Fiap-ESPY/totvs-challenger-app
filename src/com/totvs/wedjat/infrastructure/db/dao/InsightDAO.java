@@ -14,7 +14,7 @@ import java.util.List;
 
 public class InsightDAO {
 
-    public void insert(Insight insight, long meetingId) {
+    public Insight insert(Insight insight, long meetingId) {
         String sqlNext = "SELECT SQ_INSIGHT.NEXTVAL FROM DUAL";
         String sqlInsert =
                 "INSERT INTO TB_INSIGHT (id, id_meeting, type, description, evidence) " +
@@ -35,6 +35,10 @@ public class InsightDAO {
                 stmtInsert.setString(5, insight.getEvidence());
                 stmtInsert.executeUpdate();
             }
+
+            return InsightFactory.carregar(id, insight.getType(),
+                    insight.getDescription(), insight.getEvidence());
+
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao inserir insight.", e);
         }

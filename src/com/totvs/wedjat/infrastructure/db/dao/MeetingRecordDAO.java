@@ -40,10 +40,11 @@ public class MeetingRecordDAO {
 
             MeetingRecord saved = new MeetingRecord(id, meeting.getDate(), meeting.getTranscription());
 
+            List<Insight> savedInsights = new ArrayList<>();
             for (Insight insight : meeting.getInsights()) {
-                insightDAO.insert(insight, id);
+                savedInsights.add(insightDAO.insert(insight, id));
             }
-            saved.addInsights(meeting.getInsights());
+            saved.addInsights(savedInsights);
 
             return saved;
 
