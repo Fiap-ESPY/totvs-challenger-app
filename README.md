@@ -5,7 +5,7 @@ Solução Java do Challenge FIAP x TOTVS para apoiar pré-vendas e vendas com op
 Persistência em **Oracle** via **JDBC** (`ojdbc11`, Maven). Três formas de uso:
 
 - **Console** (Sprint 3): menu no terminal — `mvn exec:java`
-- **API REST + web** (Sprint 4): Javalin na porta 7070 e front estático em [`web/`](web/) — `mvn -Prun-api exec:java`
+- **API REST + web** (Sprint 4): Spring Boot na porta 7070 e front estático em [`web/`](web/) — `mvn -Prun-api spring-boot:run`
 
 ## Requisitos
 
@@ -48,7 +48,7 @@ Classe principal: `com.totvs.wedjat.Main`.
 ```bash
 sdk env
 export JAVA_HOME="$HOME/.sdkman/candidates/java/21.0.2-open"
-mvn -Prun-api exec:java
+mvn -Prun-api spring-boot:run
 ```
 
 Abra [http://localhost:7070](http://localhost:7070). Rotas documentadas em [`docs/rotas.md`](docs/rotas.md). PDF da entrega: [`wedjat-sprint4.html`](wedjat-sprint4.html) (Imprimir → Salvar como PDF).
@@ -74,7 +74,7 @@ com.totvs.wedjat
 ├── RunDdl.java               → aplica sql/ddl.sql no Oracle
 ├── console/                  → menu e entrada do usuário
 ├── application/              → WedjatSystem (fachada)
-├── api/                      → ApiServer, JsonView (REST Sprint 4)
+├── api/                      → WedjatApplication, controllers REST, JsonView (Sprint 4)
 ├── domain/                   → entidades, enums, Insight (+ subclasses)
 ├── service/                  → interfaces
 │   └── impl/                 → regras de negócio + persistência via DAO
@@ -152,7 +152,7 @@ IDs gerados por sequences (`SQ_OPPORTUNITY`, `SQ_SPICED`, etc.).
 
 **Console:** cadastrar oportunidade (**1**) → transcrição (**3**) → briefing SPICED (**5**) → handoff (**6**) → dashboard (**7**).
 
-**Web (Sprint 4):** com `mvn -Prun-api exec:java`, use as abas Oportunidades → Reunião → SPICED → Handoff → Dashboard em [http://localhost:7070](http://localhost:7070).
+**Web (Sprint 4):** com `mvn -Prun-api spring-boot:run`, use as abas Oportunidades → Reunião → SPICED → Handoff → Dashboard em [http://localhost:7070](http://localhost:7070).
 
 Transcrição de exemplo:
 
@@ -163,7 +163,7 @@ Transcrição de exemplo:
 | Comando | Profile | Descrição |
 |---------|---------|-----------|
 | `mvn exec:java` | (padrão) | Sobe o Wedjat (menu console) |
-| `mvn -Prun-api exec:java` | `run-api` | API REST + front em `web/` |
+| `mvn -Prun-api spring-boot:run` | `run-api` | API REST + front em `web/` |
 | `mvn -Prun-ddl exec:java` | `run-ddl` | Aplica `sql/ddl.sql` no Oracle |
 | `mvn -Ptest-dao exec:java` | `test-dao` | Bateria de testes JDBC/DAO |
 

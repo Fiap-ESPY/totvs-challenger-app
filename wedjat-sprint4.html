@@ -77,7 +77,7 @@
 
 <div class="section">
   <h2>1. Objetivo e escopo</h2>
-  <p>O Wedjat apoia pré-vendas e vendas TOTVS com oportunidades comerciais, transcrições de reunião, metodologia SPICED, score de handoff e dashboard por BU. Na Sprint 4, a solução evoluiu de menu console para <strong>API REST (Javalin)</strong> consumida por um <strong>front-end web</strong>, mantendo domínio, serviços e DAOs JDBC sobre Oracle FIAP.</p>
+  <p>O Wedjat apoia pré-vendas e vendas TOTVS com oportunidades comerciais, transcrições de reunião, metodologia SPICED, score de handoff e dashboard por BU. Na Sprint 4, a solução evoluiu de menu console para <strong>API REST (Spring Boot)</strong> consumida por um <strong>front-end web</strong>, mantendo domínio, serviços e DAOs JDBC sobre Oracle FIAP.</p>
 </div>
 
 <div class="section">
@@ -93,7 +93,7 @@
 
 <div class="section page-break">
   <h2>3. API REST — tabela de endpoints</h2>
-  <p>Base URL local: <code>http://localhost:7070</code>. Execução: <code>mvn -Prun-api exec:java</code>.</p>
+  <p>Base URL local: <code>http://localhost:7070</code>. Execução: <code>mvn -Prun-api spring-boot:run</code>.</p>
   <table>
     <tr><th>URI</th><th>Verbo</th><th>Descrição</th><th>Status</th></tr>
     <tr><td><code>/oportunidades</code></td><td>GET</td><td>Lista resumo do pipeline</td><td>200</td></tr>
@@ -129,7 +129,9 @@
 <div class="section">
   <h2>6. Diagrama de classes (atualizado)</h2>
   <h3>6.1 Camada API — <code>com.totvs.wedjat.api</code></h3>
-  <div class="class-card"><strong>ApiServer</strong> — expõe rotas Javalin, trata exceções HTTP, serve arquivos estáticos <code>web/</code>.</div>
+  <div class="class-card"><strong>WedjatApplication</strong> — entrada Spring Boot (porta 7070, estáticos em <code>web/</code>).</div>
+  <div class="class-card"><strong>OportunidadeRestController</strong> / <strong>DashboardRestController</strong> — endpoints REST.</div>
+  <div class="class-card"><strong>ApiExceptionHandler</strong> — respostas 400, 404 e 500 em JSON.</div>
   <div class="class-card"><strong>JsonView</strong> — converte entidades de domínio em JSON (evita ciclo HandoffScore ↔ Opportunity).</div>
   <h3>6.2 Camadas existentes (Sprint 3 + evolução)</h3>
   <div class="class-card"><strong>WedjatSystem</strong> (application) — fachada usada pelo console e pela API.</div>
@@ -140,11 +142,11 @@
 
 <div class="section page-break">
   <h2>7. Checklist — rubrica DDD Java Sprint 4</h2>
-  <div class="check-item"><span class="check-ok">✓</span> Model alinhado ao banco (5 entidades)</div>
-  <div class="check-item"><span class="check-ok">✓</span> DAO + Service com CRUD e validações</div>
-  <div class="check-item"><span class="check-ok">✓</span> API REST para fluxos do front-end</div>
-  <div class="check-item"><span class="check-ok">✓</span> Boas práticas: camadas, exceções, nomenclatura, Factory de insights</div>
-  <div class="check-item"><span class="check-ok">✓</span> Documentação PDF (este arquivo) + projeto .zip para Teams</div>
+  <div class="check-item"><span class="check-ok">OK</span> Model alinhado ao banco (5 entidades)</div>
+  <div class="check-item"><span class="check-ok">OK</span> DAO + Service com CRUD e validações</div>
+  <div class="check-item"><span class="check-ok">OK</span> API REST para fluxos do front-end</div>
+  <div class="check-item"><span class="check-ok">OK</span> Boas práticas: camadas, exceções, nomenclatura, Factory de insights</div>
+  <div class="check-item"><span class="check-ok">OK</span> Documentação PDF (este arquivo) + projeto .zip para Teams</div>
 </div>
 </div>
 </body>

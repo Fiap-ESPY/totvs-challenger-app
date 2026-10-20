@@ -3,7 +3,7 @@
 Sobe a API e o front na mesma porta. O menu de console continua em `mvn exec:java`.
 
 ```bash
-mvn -Prun-api exec:java
+mvn -Prun-api spring-boot:run
 ```
 
 Abra `http://localhost:7070`.

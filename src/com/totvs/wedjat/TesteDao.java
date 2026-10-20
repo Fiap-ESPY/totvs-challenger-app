@@ -67,7 +67,7 @@ public final class TesteDao {
             return true;
         } catch (Exception e) {
             failed++;
-            System.out.println("❌ FALHOU: " + rootMessage(e));
+            System.out.println("FALHA: FALHOU: " + rootMessage(e));
             if (e.getCause() != null && e.getCause() != e) {
                 System.out.println("   Causa: " + e.getCause().getMessage());
             }
@@ -77,7 +77,7 @@ public final class TesteDao {
 
     private static void testarConexao() throws Exception {
         try (Connection conn = ConnectionFactory.getConnection()) {
-            System.out.println("✅ Conectado: " + conn.getMetaData().getDatabaseProductName()
+            System.out.println("OK: Conectado: " + conn.getMetaData().getDatabaseProductName()
                     + " | usuário: " + conn.getMetaData().getUserName());
         }
     }
@@ -85,14 +85,14 @@ public final class TesteDao {
     private static void testarSchema() throws Exception {
         List<String> missing = SchemaValidator.findMissingObjects();
         if (!missing.isEmpty()) {
-            System.out.println("❌ Objetos ausentes no schema:");
+            System.out.println("FALHA: Objetos ausentes no schema:");
             missing.forEach(m -> System.out.println("   - " + m));
             System.out.println();
             System.out.println("Correção: conecte no Oracle (SQL Developer / SQL*Plus) com o mesmo");
             System.out.println("usuário do .env e execute o arquivo sql/ddl.sql deste projeto.");
             throw new IllegalStateException("Schema incompleto — " + missing.size() + " objeto(s) faltando");
         }
-        System.out.println("✅ Sequences e tabelas OK (5 + 5)");
+        System.out.println("OK: Sequences e tabelas OK (5 + 5)");
     }
 
     private static Opportunity testarInsert() {
@@ -101,20 +101,20 @@ public final class TesteDao {
                 "Protheus",
                 BusinessUnit.TOTVS_GESTAO,
                 PipelineStage.QUALIFICACAO);
-        System.out.println("✅ ID oportunidade: " + opp.getId()
+        System.out.println("OK: ID oportunidade: " + opp.getId()
                 + " | SPICED id: " + opp.getSpicedAssessment().getId());
         return opp;
     }
 
     private static void testarFindAll() {
         List<Opportunity> lista = opportunityService.listar();
-        System.out.println("✅ Registros listados: " + lista.size());
+        System.out.println("OK: Registros listados: " + lista.size());
     }
 
     private static void testarFindById(long id) {
         Opportunity o = opportunityService.buscarPorId(id)
                 .orElseThrow(() -> new IllegalStateException("Oportunidade id=" + id + " não encontrada"));
-        System.out.println("✅ Cliente: " + o.getClientName()
+        System.out.println("OK: Cliente: " + o.getClientName()
                 + " | SPICED: " + o.getSpicedAssessment().countPreenchidos() + "/5");
     }
 
@@ -122,7 +122,7 @@ public final class TesteDao {
         if (!opportunityService.atualizarEtapa(id, PipelineStage.PRE_VENDAS)) {
             throw new IllegalStateException("UPDATE etapa não afetou linhas");
         }
-        System.out.println("✅ Etapa atualizada para Pré-vendas");
+        System.out.println("OK: Etapa atualizada para Pré-vendas");
     }
 
     private static void testarUpdateDados(long id) {
@@ -137,7 +137,7 @@ public final class TesteDao {
                 || atualizada.getPipelineStage() != PipelineStage.PRE_VENDAS) {
             throw new IllegalStateException("UPDATE não persistiu cliente, produto, BU ou preservou a etapa");
         }
-        System.out.println("✅ Cliente, produto e BU atualizados; etapa preservada");
+        System.out.println("OK: Cliente, produto e BU atualizados; etapa preservada");
     }
 
     private static void testarValidacaoCampos(long id) {
@@ -148,7 +148,7 @@ public final class TesteDao {
             if (!e.getMessage().contains("obrigatório")) {
                 throw e;
             }
-            System.out.println("✅ Cliente em branco rejeitado");
+            System.out.println("OK: Cliente em branco rejeitado");
         }
     }
 
@@ -160,7 +160,7 @@ public final class TesteDao {
             if (!e.getMessage().contains("não encontrada")) {
                 throw e;
             }
-            System.out.println("✅ Id inexistente rejeitado");
+            System.out.println("OK: Id inexistente rejeitado");
         }
     }
 
@@ -174,7 +174,7 @@ public final class TesteDao {
         if (opp.getSpicedAssessment().countPreenchidos() < 5) {
             throw new IllegalStateException("SPICED deveria ter 5 campos preenchidos");
         }
-        System.out.println("✅ SPICED 5/5 persistido");
+        System.out.println("OK: SPICED 5/5 persistido");
     }
 
     private static void testarReuniao(Opportunity opp) {
@@ -183,7 +183,7 @@ public final class TesteDao {
         if (meeting.getId() == null) {
             throw new IllegalStateException("Reunião sem ID após insert");
         }
-        System.out.println("✅ Reunião id=" + meeting.getId()
+        System.out.println("OK: Reunião id=" + meeting.getId()
                 + " | insights=" + meeting.getInsights().size());
     }
 
@@ -192,7 +192,7 @@ public final class TesteDao {
         if (relatorio == null || !relatorio.contains("HANDOFF SCORE")) {
             throw new IllegalStateException("Relatório de handoff inválido");
         }
-        System.out.println("✅ Handoff persistido (trecho): "
+        System.out.println("OK: Handoff persistido (trecho): "
                 + relatorio.lines().filter(l -> l.contains("Score:")).findFirst().orElse("ok"));
     }
 
@@ -201,7 +201,7 @@ public final class TesteDao {
         if (opportunityService.buscarPorId(id).isPresent()) {
             throw new IllegalStateException("DELETE não removeu oportunidade id=" + id);
         }
-        System.out.println("✅ DELETE id=" + id + " (cascade em filhos)");
+        System.out.println("OK: DELETE id=" + id + " (cascade em filhos)");
     }
 
     private static String rootMessage(Throwable e) {
