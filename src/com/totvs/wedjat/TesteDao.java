@@ -6,7 +6,6 @@ import com.totvs.wedjat.domain.enums.BusinessUnit;
 import com.totvs.wedjat.domain.enums.PipelineStage;
 import com.totvs.wedjat.infrastructure.db.ConnectionFactory;
 import com.totvs.wedjat.infrastructure.db.SchemaValidator;
-import com.totvs.wedjat.infrastructure.db.dao.OpportunityDAO;
 import com.totvs.wedjat.service.impl.HandoffScoreServiceImpl;
 import com.totvs.wedjat.service.impl.OpportunityServiceImpl;
 import com.totvs.wedjat.service.impl.SpicedServiceImpl;
@@ -45,6 +44,9 @@ public final class TesteDao {
             run("SELECT listar oportunidades", TesteDao::testarFindAll);
             run("SELECT por ID", () -> testarFindById(ref.getId()));
             run("UPDATE etapa pipeline", () -> testarUpdateStage(ref.getId()));
+            run("UPDATE cliente, produto e BU", () -> testarUpdateDados(ref.getId()));
+            run("Validação de cliente em branco", () -> testarValidacaoCampos(ref.getId()));
+            run("UPDATE id inexistente", TesteDao::testarUpdateInexistente);
             run("UPDATE SPICED", () -> testarSpiced(ref));
             run("INSERT reunião + insights", () -> testarReuniao(ref));
             run("INSERT/UPDATE handoff score", () -> testarHandoff(ref));
@@ -123,6 +125,45 @@ public final class TesteDao {
         System.out.println("✅ Etapa atualizada para Pré-vendas");
     }
 
+    private static void testarUpdateDados(long id) {
+        Opportunity atualizada = opportunityService.atualizar(
+                id,
+                "Empresa Teste Atualizada",
+                "RM",
+                BusinessUnit.RD_STATION);
+        if (!"Empresa Teste Atualizada".equals(atualizada.getClientName())
+                || !"RM".equals(atualizada.getProduct())
+                || atualizada.getBusinessUnit() != BusinessUnit.RD_STATION
+                || atualizada.getPipelineStage() != PipelineStage.PRE_VENDAS) {
+            throw new IllegalStateException("UPDATE não persistiu cliente, produto, BU ou preservou a etapa");
+        }
+        System.out.println("✅ Cliente, produto e BU atualizados; etapa preservada");
+    }
+
+    private static void testarValidacaoCampos(long id) {
+        try {
+            opportunityService.atualizar(id, "   ", "RM", BusinessUnit.RD_STATION);
+            throw new IllegalStateException("Cliente em branco deveria ser rejeitado");
+        } catch (IllegalArgumentException e) {
+            if (!e.getMessage().contains("obrigatório")) {
+                throw e;
+            }
+            System.out.println("✅ Cliente em branco rejeitado");
+        }
+    }
+
+    private static void testarUpdateInexistente() {
+        try {
+            opportunityService.atualizar(Long.MAX_VALUE, "Cliente", "Produto", BusinessUnit.TECHFIN);
+            throw new IllegalStateException("Id inexistente deveria ser rejeitado");
+        } catch (IllegalArgumentException e) {
+            if (!e.getMessage().contains("não encontrada")) {
+                throw e;
+            }
+            System.out.println("✅ Id inexistente rejeitado");
+        }
+    }
+
     private static void testarSpiced(Opportunity opp) {
         spicedService.atualizarSpiced(opp,
                 "Cliente usa ERP legado",
@@ -156,7 +197,8 @@ public final class TesteDao {
     }
 
     private static void testarDelete(long id) {
-        if (!new OpportunityDAO().delete(id)) {
+        opportunityService.excluir(id);
+        if (opportunityService.buscarPorId(id).isPresent()) {
             throw new IllegalStateException("DELETE não removeu oportunidade id=" + id);
         }
         System.out.println("✅ DELETE id=" + id + " (cascade em filhos)");

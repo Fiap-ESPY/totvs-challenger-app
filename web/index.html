@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wedjat — Inteligência comercial</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <p class="marca">Wedjat</p>
+      <h1>Inteligência comercial TOTVS</h1>
+    </div>
+    <p class="top-nota" id="status">Carregando oportunidades…</p>
+  </header>
+
+  <nav class="abas" aria-label="Seções">
+    <button type="button" class="aba ativa" data-aba="oportunidades">Oportunidades</button>
+    <button type="button" class="aba" data-aba="reuniao">Reunião</button>
+    <button type="button" class="aba" data-aba="spiced">SPICED</button>
+    <button type="button" class="aba" data-aba="handoff">Handoff</button>
+    <button type="button" class="aba" data-aba="dashboard">Dashboard</button>
+  </nav>
+
+  <main>
+    <section id="painel-oportunidades" class="painel ativo">
+      <div class="grade">
+        <form id="form-oportunidade" class="cartao">
+          <h2 id="titulo-form">Nova oportunidade</h2>
+          <label>Cliente<input name="cliente" required maxlength="120"></label>
+          <label>Produto<input name="produto" required maxlength="80" placeholder="Protheus, RM, Fluig"></label>
+          <label>Unidade de negócio
+            <select name="bu" required>
+              <option value="TOTVS_GESTAO">TOTVS Gestão</option>
+              <option value="RD_STATION">RD Station</option>
+              <option value="TECHFIN">TOTVS Techfin</option>
+            </select>
+          </label>
+          <label>Etapa
+            <select name="etapa" required>
+              <option value="GERACAO_DEMANDA">Geração de demanda</option>
+              <option value="QUALIFICACAO" selected>Qualificação</option>
+              <option value="PRE_VENDAS">Pré-vendas</option>
+              <option value="REUNIAO_DIAGNOSTICA">Reunião diagnóstica</option>
+              <option value="PROPOSTA">Proposta</option>
+              <option value="NEGOCIACAO">Negociação</option>
+              <option value="FECHAMENTO">Fechamento</option>
+            </select>
+          </label>
+          <div class="acoes">
+            <button type="submit" class="primario" id="btn-salvar">Cadastrar</button>
+            <button type="button" class="secundario" id="btn-limpar">Limpar</button>
+            <button type="button" class="perigo" id="btn-excluir" hidden>Excluir</button>
+          </div>
+        </form>
+        <div class="cartao lista">
+          <h2>Pipeline</h2>
+          <div id="lista-oportunidades" class="tabela-wrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="painel-reuniao" class="painel">
+      <form id="form-reuniao" class="cartao">
+        <h2>Registrar transcrição</h2>
+        <label>Oportunidade<select name="oportunidade" id="sel-reuniao" required></select></label>
+        <label>Transcrição
+          <textarea name="transcricao" required rows="6" placeholder="Cliente usa Protheus, tem dor em RH, comparou com Senior e o CFO bloqueou o orçamento."></textarea>
+        </label>
+        <button type="submit" class="primario">Extrair insights</button>
+      </form>
+      <div id="resultado-reuniao" class="cartao"></div>
+    </section>
+
+    <section id="painel-spiced" class="painel">
+      <form id="form-spiced" class="cartao">
+        <h2>Campos SPICED</h2>
+        <label>Oportunidade<select name="oportunidade" id="sel-spiced" required></select></label>
+        <label>Situation<input name="situation"></label>
+        <label>Pain<input name="pain"></label>
+        <label>Impact<input name="impact"></label>
+        <label>Critical event<input name="criticalEvent"></label>
+        <label>Decision<input name="decision"></label>
+        <div class="acoes">
+          <button type="submit" class="primario">Salvar SPICED</button>
+          <button type="button" class="secundario" id="btn-briefing">Gerar briefing</button>
+        </div>
+      </form>
+      <pre id="briefing" class="cartao relatorio">O briefing aparece aqui.</pre>
+    </section>
+
+    <section id="painel-handoff" class="painel">
+      <form id="form-handoff" class="cartao">
+        <h2>Score de handoff</h2>
+        <label>Oportunidade<select name="oportunidade" id="sel-handoff" required></select></label>
+        <button type="submit" class="primario">Calcular score</button>
+      </form>
+      <div id="resultado-handoff" class="cartao">
+        <p class="vazio">Escolha uma oportunidade e calcule o score de passagem para vendas.</p>
+      </div>
+    </section>
+
+    <section id="painel-dashboard" class="painel">
+      <div class="cartao faixa">
+        <label>Filtrar por BU
+          <select id="filtro-bu">
+            <option value="">Todas</option>
+            <option value="TOTVS_GESTAO">TOTVS Gestão</option>
+            <option value="RD_STATION">RD Station</option>
+            <option value="TECHFIN">TOTVS Techfin</option>
+          </select>
+        </label>
+        <button type="button" class="secundario" id="btn-dashboard">Atualizar</button>
+      </div>
+      <div id="cards-dashboard" class="cards"></div>
+      <div class="grade">
+        <div id="barras-bu" class="cartao"></div>
+        <div id="barras-etapa" class="cartao"></div>
+      </div>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
