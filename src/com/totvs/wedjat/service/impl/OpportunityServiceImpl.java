@@ -29,12 +29,44 @@ public class OpportunityServiceImpl implements IOpportunityService {
     }
 
     @Override
+    public List<Opportunity> listarResumo() {
+        return dao.findAllComSpiced();
+    }
+
+    @Override
     public Optional<Opportunity> buscarPorId(long id) {
         return dao.findById(id);
     }
 
     @Override
+    public Opportunity atualizar(long id, String clientName, String product, BusinessUnit businessUnit) {
+        Opportunity atual = dao.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Oportunidade não encontrada."));
+        Opportunity validada = new Opportunity(
+                atual.getId(),
+                clientName,
+                product,
+                businessUnit,
+                atual.getPipelineStage());
+        if (!dao.update(id, validada.getClientName(), validada.getProduct(), validada.getBusinessUnit())) {
+            throw new IllegalArgumentException("Oportunidade não encontrada.");
+        }
+        return dao.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Oportunidade não encontrada."));
+    }
+
+    @Override
     public boolean atualizarEtapa(long id, PipelineStage novaEtapa) {
+        if (novaEtapa == null) {
+            throw new IllegalArgumentException("Etapa do pipeline obrigatória.");
+        }
         return dao.updateStage(id, novaEtapa);
+    }
+
+    @Override
+    public void excluir(long id) {
+        if (!dao.delete(id)) {
+            throw new IllegalArgumentException("Oportunidade não encontrada.");
+        }
     }
 }

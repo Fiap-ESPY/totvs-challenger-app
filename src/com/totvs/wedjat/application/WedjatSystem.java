@@ -1,5 +1,6 @@
 package com.totvs.wedjat.application;
 
+import com.totvs.wedjat.domain.HandoffScore;
 import com.totvs.wedjat.domain.MeetingRecord;
 import com.totvs.wedjat.domain.Opportunity;
 import com.totvs.wedjat.domain.enums.BusinessUnit;
@@ -38,12 +39,34 @@ public class WedjatSystem {
         return this.opportunityService.listar();
     }
 
+    public List<Opportunity> listarOportunidadesResumo() {
+        return this.opportunityService.listarResumo();
+    }
+
     public Optional<Opportunity> buscarOportunidade(long id) {
         return this.opportunityService.buscarPorId(id);
     }
 
+    public Opportunity atualizarOportunidade(
+            long id,
+            String clientName,
+            String product,
+            BusinessUnit businessUnit) {
+        return this.opportunityService.atualizar(id, clientName, product, businessUnit);
+    }
+
+    public void excluirOportunidade(long id) {
+        this.opportunityService.excluir(id);
+    }
+
     public boolean atualizarEtapa(long id, PipelineStage novaEtapa) {
         return this.opportunityService.atualizarEtapa(id, novaEtapa);
+    }
+
+    public List<MeetingRecord> listarReunioes(long opportunityId) {
+        return this.buscarOportunidade(opportunityId)
+                .orElseThrow(() -> new IllegalArgumentException("Oportunidade não encontrada."))
+                .getMeetings();
     }
 
     public void atualizarSpiced(
@@ -74,16 +97,29 @@ public class WedjatSystem {
     }
 
     public String calcularHandoffScore(long opportunityId) {
+        return this.calcularHandoff(opportunityId).toString();
+    }
+
+    public HandoffScore calcularHandoff(long opportunityId) {
         Opportunity opportunity = this.buscarOportunidade(opportunityId)
                 .orElseThrow(() -> new IllegalArgumentException("Oportunidade não encontrada."));
-        return this.handoffScoreService.gerarRelatorio(opportunity);
+        this.handoffScoreService.gerarRelatorio(opportunity);
+        return opportunity.getHandoffScore();
     }
 
     public String gerarDashboard() {
-        return this.dashboardService.gerarResumo(this.opportunityService.listar());
+        return this.descreverDashboard(this.opportunityService.listarResumo());
+    }
+
+    public String descreverDashboard(List<Opportunity> opportunities) {
+        return this.dashboardService.gerarResumo(opportunities);
     }
 
     public String gerarDashboardPorBu(BusinessUnit businessUnit) {
-        return this.dashboardService.gerarResumoPorBu(this.opportunityService.listar(), businessUnit);
+        return this.descreverDashboardPorBu(this.opportunityService.listarResumo(), businessUnit);
+    }
+
+    public String descreverDashboardPorBu(List<Opportunity> opportunities, BusinessUnit businessUnit) {
+        return this.dashboardService.gerarResumoPorBu(opportunities, businessUnit);
     }
 }

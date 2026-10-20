@@ -17,7 +17,14 @@ public interface IOpportunityService {
 
     List<Opportunity> listar();
 
+    /** Resumo para API/dashboard (oportunidade + SPICED, sem reuniões). */
+    List<Opportunity> listarResumo();
+
     Optional<Opportunity> buscarPorId(long id);
 
+    Opportunity atualizar(long id, String clientName, String product, BusinessUnit businessUnit);
+
     boolean atualizarEtapa(long id, PipelineStage novaEtapa);
+
+    void excluir(long id);
 }

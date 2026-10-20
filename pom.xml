@@ -6,6 +6,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.5</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.totvs.wedjat</groupId>
     <artifactId>wedjat</artifactId>
     <version>1.0.0</version>
@@ -16,13 +23,14 @@
 
     <properties>
         <java.version>21</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <!-- Driver JDBC Oracle -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
@@ -31,29 +39,18 @@
     </dependencies>
 
     <build>
-        <!-- Mantém a estrutura de pastas atual (src/com/...) -->
         <sourceDirectory>src</sourceDirectory>
 
         <plugins>
-            <!-- Compilador Java 21 -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <!-- Execução via mvn exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.4.1</version>
                 <configuration>
-                    <!-- Padrão: sobe a aplicação principal -->
                     <mainClass>com.totvs.wedjat.Main</mainClass>
                 </configuration>
             </plugin>
@@ -61,7 +58,6 @@
     </build>
 
     <profiles>
-        <!-- Bateria de testes JDBC/DAO: mvn -Ptest-dao exec:java -->
         <profile>
             <id>run-ddl</id>
             <build>
@@ -71,6 +67,20 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <configuration>
                             <mainClass>com.totvs.wedjat.RunDdl</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>run-api</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.totvs.wedjat.api.WedjatApplication</mainClass>
                         </configuration>
                     </plugin>
                 </plugins>

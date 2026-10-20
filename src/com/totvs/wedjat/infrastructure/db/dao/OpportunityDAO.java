@@ -86,6 +86,33 @@ public class OpportunityDAO {
         return result;
     }
 
+    /**
+     * Lista oportunidades com SPICED em uma única ida ao banco (sem reuniões/insights).
+     * Usado pela API REST e pelo dashboard para evitar dezenas de round-trips ao Oracle.
+     */
+    public List<Opportunity> findAllComSpiced() {
+        String sql =
+                "SELECT o.id, o.client_name, o.product, o.business_unit, o.pipeline_stage, " +
+                "       s.id spiced_id, s.situation, s.pain, s.impact, s.critical_event, s.decision " +
+                "FROM TB_OPPORTUNITY o " +
+                "LEFT JOIN TB_SPICED_ASSESSMENT s ON s.id_opportunity = o.id " +
+                "ORDER BY o.id";
+
+        List<Opportunity> result = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                result.add(mapRowComSpiced(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar oportunidades (resumo).", e);
+        }
+        return result;
+    }
+
     // -------------------------------------------------------------------------
     // FIND BY ID
     // -------------------------------------------------------------------------
@@ -109,6 +136,28 @@ public class OpportunityDAO {
             throw new RuntimeException("Erro ao buscar oportunidade id=" + id + ".", e);
         }
         return Optional.empty();
+    }
+
+    // -------------------------------------------------------------------------
+    // UPDATE (cliente, produto, BU)
+    // -------------------------------------------------------------------------
+
+    public boolean update(long id, String clientName, String product, BusinessUnit businessUnit) {
+        String sql =
+                "UPDATE TB_OPPORTUNITY SET client_name = ?, product = ?, business_unit = ? WHERE id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, clientName);
+            stmt.setString(2, product);
+            stmt.setString(3, businessUnit.name());
+            stmt.setLong(4, id);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar oportunidade id=" + id + ".", e);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -151,6 +200,29 @@ public class OpportunityDAO {
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    private Opportunity mapRowComSpiced(ResultSet rs) throws SQLException {
+        long id = rs.getLong("id");
+        String clientName = rs.getString("client_name");
+        String product = rs.getString("product");
+        BusinessUnit bu = BusinessUnit.valueOf(rs.getString("business_unit"));
+        PipelineStage stage = PipelineStage.valueOf(rs.getString("pipeline_stage"));
+
+        Opportunity opp = new Opportunity(id, clientName, product, bu, stage);
+
+        long spicedId = rs.getLong("spiced_id");
+        if (!rs.wasNull()) {
+            SpicedAssessment spiced = new SpicedAssessment(
+                    spicedId,
+                    rs.getString("situation"),
+                    rs.getString("pain"),
+                    rs.getString("impact"),
+                    rs.getString("critical_event"),
+                    rs.getString("decision"));
+            opp.setSpicedAssessment(spiced);
+        }
+        return opp;
+    }
 
     private Opportunity mapRow(ResultSet rs) throws SQLException {
         long id                 = rs.getLong("id");

@@ -1,0 +1,222 @@
+:root {
+  --papel: #f3efe6;
+  --cartao: #fffdf8;
+  --tinta: #1c1915;
+  --muted: #5e574e;
+  --linha: #e4dccf;
+  --teal: #0e6b56;
+  --teal-escuro: #0a4a3c;
+  --perigo: #8d2f2f;
+  --sombra: 0 12px 30px rgba(40, 32, 20, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, rgba(14, 107, 86, 0.08), transparent 28%),
+    var(--papel);
+  color: var(--tinta);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  padding: 28px 36px 12px;
+}
+
+.marca {
+  margin: 0;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--teal);
+  font-weight: 700;
+}
+
+h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+h1 { margin: 4px 0 0; font-size: 32px; }
+h2 { margin: 0 0 14px; font-size: 22px; }
+
+.top-nota { margin: 0; color: var(--muted); max-width: 360px; text-align: right; }
+
+.abas {
+  display: flex;
+  gap: 8px;
+  padding: 8px 36px 0;
+  border-bottom: 1px solid var(--linha);
+}
+
+.aba {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 12px 14px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.aba.ativa {
+  color: var(--tinta);
+  border-bottom-color: var(--teal);
+}
+
+main { padding: 24px 36px 48px; }
+
+.painel { display: none; }
+.painel.ativo { display: block; }
+
+.grade {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 18px;
+}
+
+.cartao {
+  background: var(--cartao);
+  border: 1px solid var(--linha);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--sombra);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+input, select, textarea {
+  border: 1px solid var(--linha);
+  background: #fff;
+  color: var(--tinta);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+textarea { resize: vertical; }
+
+.acoes, .faixa {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.primario { background: var(--teal); color: white; }
+.primario:hover { background: var(--teal-escuro); }
+.secundario { background: transparent; border: 1px solid var(--linha); color: var(--tinta); }
+.perigo { background: transparent; color: var(--perigo); border: 1px solid #e7c8c8; }
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabela th {
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px;
+  border-bottom: 1px solid var(--linha);
+}
+
+.tabela td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--linha);
+  vertical-align: top;
+}
+
+.tabela tr { cursor: pointer; }
+.tabela tr:hover td { background: #f7f3ea; }
+.tabela tr.selecionada td { background: #e7f3ef; }
+
+.selo {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: #efe7d8;
+  font-size: 12px;
+}
+
+.selo.risco { background: #f3d6d2; color: var(--perigo); }
+
+.vazio { color: var(--muted); }
+
+.relatorio {
+  white-space: pre-wrap;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.insight {
+  border-top: 1px solid var(--linha);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.card-numero {
+  font-family: Georgia, serif;
+  font-size: 40px;
+  margin: 0;
+}
+
+.barra {
+  display: grid;
+  grid-template-columns: 160px 1fr 32px;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.trilho {
+  height: 8px;
+  background: #efe7d8;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.trilho span {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+}
+
+.erro { color: var(--perigo); }
+
+@media (max-width: 900px) {
+  .grade, .cards { grid-template-columns: 1fr; }
+  .top, .abas, main { padding-left: 16px; padding-right: 16px; }
+  .top { flex-direction: column; align-items: start; }
+  .top-nota { text-align: left; }
+}

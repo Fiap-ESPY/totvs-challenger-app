@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedjat — Sprint 4 — DDD Java</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', Arial, sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; }
+  @media print { .no-print { display: none !important; } .page-break { page-break-before: always; } .cover { page-break-after: always; } body { font-size: 11px; } }
+  .page { max-width: 820px; margin: 0 auto; padding: 40px 48px; }
+  .cover { display: flex; flex-direction: column; min-height: 100vh; padding: 80px; background: #0f172a; color: #fff; }
+  .cover-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #94a3b8; margin-bottom: 48px; }
+  .cover-title { font-size: 38px; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+  .cover-subtitle { font-size: 18px; color: #64748b; margin-bottom: 48px; }
+  .cover-divider { width: 56px; height: 3px; background: #0e6b56; border-radius: 2px; margin-bottom: 48px; }
+  .cover-members { margin-top: auto; }
+  .cover-member { margin-bottom: 12px; }
+  .cover-member-name { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+  .cover-member-rm { font-size: 12px; color: #64748b; }
+  h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; }
+  h3 { font-size: 13px; font-weight: 600; margin: 16px 0 8px; color: #334155; }
+  p, li { line-height: 1.65; color: #334155; margin-bottom: 8px; }
+  .section { margin-bottom: 36px; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; margin: 12px 0; }
+  th { background: #f8fafc; text-align: left; padding: 8px; border: 1px solid #e2e8f0; }
+  td { padding: 8px; border: 1px solid #e2e8f0; vertical-align: top; }
+  code { font-family: monospace; font-size: 10px; background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
+  .toc { list-style: none; }
+  .toc li { padding: 4px 0; border-bottom: 1px dotted #e2e8f0; display: flex; justify-content: space-between; font-size: 12px; }
+  .proto-img { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; margin: 8px 0 20px; }
+  .class-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .class-card strong { font-size: 12px; }
+  .print-bar { position: fixed; top: 0; left: 0; right: 0; background: #1e293b; color: #fff; padding: 10px 24px; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+  .print-btn { background: #0e6b56; color: #fff; border: none; padding: 7px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .print-spacer { height: 46px; }
+  .check-item { display: flex; gap: 8px; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+  .check-ok { color: #16a34a; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="print-bar no-print">
+  <span>Wedjat — Sprint 4 · DDD Java · Imprimir → Salvar como PDF</span>
+  <button class="print-btn" onclick="window.print()">Salvar PDF</button>
+</div>
+<div class="print-spacer no-print"></div>
+
+<div class="cover">
+  <div class="cover-tag">FIAP · Challenge 2026 · Sprint 4</div>
+  <div class="cover-title">Wedjat</div>
+  <div class="cover-subtitle">Inteligência Comercial TOTVS — API REST + Front-end</div>
+  <div class="cover-divider"></div>
+  <div class="cover-members">
+    <p style="color:#64748b;font-size:12px;margin-bottom:16px;">Integrantes</p>
+    <div class="cover-member"><div class="cover-member-name">Beatriz Cortez</div><div class="cover-member-rm">RM561431</div></div>
+    <div class="cover-member"><div class="cover-member-name">Bruno Alves</div><div class="cover-member-rm">RM563986</div></div>
+    <div class="cover-member"><div class="cover-member-name">Davi de Jesus</div><div class="cover-member-rm">RM566316</div></div>
+    <div class="cover-member"><div class="cover-member-name">Gabriel Augusto</div><div class="cover-member-rm">RM564126</div></div>
+    <div class="cover-member"><div class="cover-member-name">Raphaela Tatto</div><div class="cover-member-rm">RM572059</div></div>
+  </div>
+</div>
+
+<div class="page">
+<div class="section">
+  <h2>Sumário</h2>
+  <ul class="toc">
+    <li><span>1. Objetivo e escopo</span><span>2</span></li>
+    <li><span>2. Funcionalidades (MVP)</span><span>2</span></li>
+    <li><span>3. API REST — endpoints</span><span>3</span></li>
+    <li><span>4. Telas implementadas</span><span>4</span></li>
+    <li><span>5. Modelo do banco</span><span>5</span></li>
+    <li><span>6. Diagrama de classes (atualizado)</span><span>5</span></li>
+    <li><span>7. Checklist rubrica Sprint 4</span><span>6</span></li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>1. Objetivo e escopo</h2>
+  <p>O Wedjat apoia pré-vendas e vendas TOTVS com oportunidades comerciais, transcrições de reunião, metodologia SPICED, score de handoff e dashboard por BU. Na Sprint 4, a solução evoluiu de menu console para <strong>API REST (Spring Boot)</strong> consumida por um <strong>front-end web</strong>, mantendo domínio, serviços e DAOs JDBC sobre Oracle FIAP.</p>
+</div>
+
+<div class="section">
+  <h2>2. Funcionalidades principais</h2>
+  <ul>
+    <li>Cadastro, listagem, edição e exclusão de oportunidades (CRUD com validação).</li>
+    <li>Registro de transcrição com extração automática de insights.</li>
+    <li>Atualização SPICED, briefing com lacunas e perguntas sugeridas.</li>
+    <li>Cálculo e persistência do handoff score (0–100).</li>
+    <li>Dashboard consolidado e filtro por unidade de negócio.</li>
+  </ul>
+</div>
+
+<div class="section page-break">
+  <h2>3. API REST — tabela de endpoints</h2>
+  <p>Base URL local: <code>http://localhost:7070</code>. Execução: <code>mvn -Prun-api spring-boot:run</code>.</p>
+  <table>
+    <tr><th>URI</th><th>Verbo</th><th>Descrição</th><th>Status</th></tr>
+    <tr><td><code>/oportunidades</code></td><td>GET</td><td>Lista resumo do pipeline</td><td>200</td></tr>
+    <tr><td><code>/oportunidades</code></td><td>POST</td><td>Cria oportunidade</td><td>201, 400</td></tr>
+    <tr><td><code>/oportunidades/{id}</code></td><td>GET</td><td>Detalhe com SPICED e reuniões</td><td>200, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}</code></td><td>PUT</td><td>Atualiza cliente, produto e BU</td><td>200, 400, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}</code></td><td>DELETE</td><td>Remove oportunidade (cascade)</td><td>200, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}/etapa</code></td><td>PATCH</td><td>Atualiza etapa do pipeline</td><td>200, 400, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}/reunioes</code></td><td>GET</td><td>Lista reuniões</td><td>200, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}/reunioes</code></td><td>POST</td><td>Registra transcrição + insights</td><td>201, 400, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}/spiced</code></td><td>GET / PUT</td><td>Consulta / atualiza SPICED</td><td>200, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}/briefing</code></td><td>GET</td><td>Briefing SPICED</td><td>200, 404</td></tr>
+    <tr><td><code>/oportunidades/{id}/handoff</code></td><td>POST</td><td>Calcula handoff score</td><td>200, 404</td></tr>
+    <tr><td><code>/dashboard</code></td><td>GET</td><td>Indicadores gerais</td><td>200</td></tr>
+    <tr><td><code>/dashboard/{bu}</code></td><td>GET</td><td>Dashboard filtrado por BU</td><td>200, 400</td></tr>
+  </table>
+  <p>Erros de validação e id inexistente retornam JSON <code>{ "erro": "..." }</code>. Falhas JDBC retornam 500 com mensagem amigável (sem stack trace).</p>
+</div>
+
+<div class="section page-break">
+  <h2>4. Telas implementadas (prints)</h2>
+  <p>Front estático em <code>web/</code> (Oportunidades, Reunião, SPICED, Handoff, Dashboard), servido pela mesma API na porta 7070.</p>
+  <h3>4.1 Oportunidades — cadastro e pipeline</h3>
+  <img class="proto-img" src="docs/screenshots/tela-oportunidades.png" alt="Tela de oportunidades">
+  <p>Demais telas: abas Reunião (transcrição + insights), SPICED (campos + briefing), Handoff (score) e Dashboard (cards e barras). Capturar prints adicionais com a API em execução, se o professor solicitar mais imagens.</p>
+</div>
+
+<div class="section page-break">
+  <h2>5. Modelo do banco de dados</h2>
+  <p>Oracle FIAP — 5 tabelas: <code>TB_OPPORTUNITY</code>, <code>TB_SPICED_ASSESSMENT</code>, <code>TB_MEETING_RECORD</code>, <code>TB_INSIGHT</code>, <code>TB_HANDOFF_SCORE</code>. DDL em <code>sql/ddl.sql</code> (Sprint 3). Relacionamentos 1:1 (SPICED, handoff), 1:N (reuniões, insights) com <code>ON DELETE CASCADE</code>.</p>
+</div>
+
+<div class="section">
+  <h2>6. Diagrama de classes (atualizado)</h2>
+  <h3>6.1 Camada API — <code>com.totvs.wedjat.api</code></h3>
+  <div class="class-card"><strong>WedjatApplication</strong> — entrada Spring Boot (porta 7070, estáticos em <code>web/</code>).</div>
+  <div class="class-card"><strong>OportunidadeRestController</strong> / <strong>DashboardRestController</strong> — endpoints REST.</div>
+  <div class="class-card"><strong>ApiExceptionHandler</strong> — respostas 400, 404 e 500 em JSON.</div>
+  <div class="class-card"><strong>JsonView</strong> — converte entidades de domínio em JSON (evita ciclo HandoffScore ↔ Opportunity).</div>
+  <h3>6.2 Camadas existentes (Sprint 3 + evolução)</h3>
+  <div class="class-card"><strong>WedjatSystem</strong> (application) — fachada usada pelo console e pela API.</div>
+  <div class="class-card"><strong>OpportunityServiceImpl</strong> — CRUD, validação, <code>listarResumo()</code> para listagens rápidas.</div>
+  <div class="class-card"><strong>OpportunityDAO</strong> — <code>findAllComSpiced()</code> (JOIN), <code>update()</code>, CRUD completo.</div>
+  <p>Domínio, demais services e DAOs permanecem conforme Sprint 3 (SPICED, transcrição, handoff, dashboard).</p>
+</div>
+
+<div class="section page-break">
+  <h2>7. Checklist — rubrica DDD Java Sprint 4</h2>
+  <div class="check-item"><span class="check-ok">OK</span> Model alinhado ao banco (5 entidades)</div>
+  <div class="check-item"><span class="check-ok">OK</span> DAO + Service com CRUD e validações</div>
+  <div class="check-item"><span class="check-ok">OK</span> API REST para fluxos do front-end</div>
+  <div class="check-item"><span class="check-ok">OK</span> Boas práticas: camadas, exceções, nomenclatura, Factory de insights</div>
+  <div class="check-item"><span class="check-ok">OK</span> Documentação PDF (este arquivo) + projeto .zip para Teams</div>
+</div>
+</div>
+</body>
+</html>
